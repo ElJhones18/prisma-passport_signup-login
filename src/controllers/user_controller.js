@@ -1,3 +1,4 @@
+const passport = require('passport');
 const userModel = require("../models/user_model");
 
 // req: request, solicitud que se hace. res: response, respuesta
@@ -31,9 +32,9 @@ const signUpUser = async (req, res) => {
   }
 };
 
-const loginUser = async (req, res, next) => {
+const loginUser = (req, res, next) => {
   // Utiliza passport para autenticar usando la estrategia local
-  passport.authenticate('local', (err, user, info) => {
+  passport.authenticate('local', function(err, user, info) {
     if (err) {
       return next(err);
     }
@@ -42,7 +43,7 @@ const loginUser = async (req, res, next) => {
       return res.status(400).json(info);
     }
     // Si hay usuario, loguear
-    req.logIn(user, (err) => {
+    req.logIn(user, function (err) {
       if (err) {
         return next(err);
       }
@@ -52,8 +53,6 @@ const loginUser = async (req, res, next) => {
 }
 
 module.exports = {
-  createUser,
-  getUser,
   signUpUser,
   loginUser
 };

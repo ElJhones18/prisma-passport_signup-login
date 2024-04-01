@@ -1,25 +1,24 @@
 // Importación de módulos necesarios
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
-const User = require('../models/user');
+const userModel = require('../models/user_model');
 
 // Configuración de la estrategia local
 passport.use(new LocalStrategy({
     // Nombres de los campos del formulario de login
     usernameField: 'user_email',
-    passwordField: 'user_password'
+    passwordField: 'password'
 }, 
     async function(email, password, done)  {
         try {
             // Buscar un usuario con el email proporcionado en la base de datos
-            const user = await userModel.findOne({ user_email: email
-            });
+            const user = await userModel.findOne({ user_email: email });
             // Si no se encuentra el usuario, devolver un mensaje de error
             if (!user) {
                 return done(null, false, { message: 'Usuario no encontrado' });
             }
             // Si la contraseña no coincide, devolver un mensaje de error
-            if (!user.password !== password) {
+            if (user.password !== password) {
                 return done(null, false, { message: 'Contraseña incorrecta' });
             }
 
@@ -34,7 +33,7 @@ passport.use(new LocalStrategy({
 // Serialización del usuario para almacenarlo en la sesión
 // Serialización es el proceso de convertir un objeto en una secuencia de bytes para almacenarlo o transmitirlo a la memoria, una base de datos o un archivo.
 
-passport.serializeUser((user, done) => {
+passport.serializeUser(function(user, done) {
     done(null, user.id);
 });
 

@@ -8,15 +8,16 @@
 // })
 
 // Importación de módulos necesarios con express-session
-
-const express = require('express-session');
+const session = require('express-session');
 const passport = require('./src/passport/user_passport');
-
+const express = require('express');
 const userRoutes = require("./src/routes/user_routes");
 // bodyParser es un middleware de express
 // lo que hace es parsear el cuerpo de las solicitudes entrantes
 // en formato JSON, multipartes (ficheros, imágenes) y lo convierte en un objeto JavaScript
 const bodyParser = require("body-parser"); // nos permite desde el cuerpo enviar en formato json
+const mongoose = require('mongoose');
+
 
 require("dotenv").config();
 
@@ -51,19 +52,18 @@ const mongo_connect = () => {
 }
 mongo_connect();
 
-// Llamar la ruta. Rutas:
-app.use('/api/v1/users', userRoutes);
-
 // inicializa y configura el middleware de sesion-express
+app.use(session({
+    secret: 'secret',
+    resave: false,
+    saveUninitialized: false
+}));
 
-app.use(
-    session({
-        secret: 'secret',
-        resave: false,
-        saveUninitialized: false,
-    })
-);
 
 // inicializa y configura el middleware de passport
 app.use(passport.initialize());
 app.use(passport.session());
+
+
+// Llamar la ruta. Rutas:
+app.use('/api/v1/users', userRoutes);
