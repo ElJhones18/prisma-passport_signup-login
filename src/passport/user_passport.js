@@ -30,3 +30,22 @@ passport.use(new LocalStrategy({
         }
     }
 ));
+
+// Serialización del usuario para almacenarlo en la sesión
+// Serialización es el proceso de convertir un objeto en una secuencia de bytes para almacenarlo o transmitirlo a la memoria, una base de datos o un archivo.
+
+passport.serializeUser((user, done) => {
+    done(null, user.id);
+});
+
+// Deserialización del usuario para obtenerlo de la sesión y poder utilizarlo en las rutas protegidas por Passport 
+// Deserialización convertir una secuencia de bytes en un objeto.
+
+passport.deserializeUser((id, done) => {
+    userModel.findById(id, (err, user) => {
+        done(err, user);
+    });
+});
+
+// Exportar el módulo de configuración de Passport
+module.exports = passport;
